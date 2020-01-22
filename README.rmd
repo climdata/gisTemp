@@ -94,9 +94,9 @@ write.table(tG, file = "csv/monthly_temperature_global.csv", append = FALSE, quo
 require("ggplot2")
 temp <- read.csv("./csv/monthly_temperature_global.csv", sep=",")
 mp <- ggplot() +
+      geom_line(aes(y=temp$north, x=temp$ts), color="blue") +  
+      geom_line(aes(y=temp$south, x=temp$ts), color="red") +  
       geom_line(aes(y=temp$global, x=temp$ts), color="green") +
-      geom_line(aes(y=temp$north, x=temp$ts), color="blue") +
-      geom_line(aes(y=temp$south, x=temp$ts), color="red") +
       xlab("Year") + ylab("Temperature ['C]")
 mp
 ```
