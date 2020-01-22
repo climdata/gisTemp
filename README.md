@@ -63,4 +63,24 @@ tempNorth <- read.csv("https://data.giss.nasa.gov/gistemp/tabledata_v4/NH.Ts+dSS
 tempSouth <- read.csv("https://data.giss.nasa.gov/gistemp/tabledata_v4/SH.Ts+dSST.csv", sep=",", na = "NA", skip = 1)
 
 tempZones <- read.csv("https://data.giss.nasa.gov/gistemp/tabledata_v4/ZonAnn.Ts+dSST.csv", sep=",", na = "NA", skip = 1)
+
+currMonth <- 1
+tG <- tempGlobal[,c('Year', 'Jan')]
+names(tG)[names(tG) == "Jan"] <- "temperature"
+tG$month = currMonth
+
+for (month in c("Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")) {
+  currMonth <- currMonth+1
+  temp <- tempGlobal[,c('Year', month)]
+  names(temp)[names(temp) == month] <- "temperature"
+  temp$month = currMonth
+  tG <- rbind(tG, temp)
+}
+names(tG)[names(tG) == 'Year'] <- 'year'
+tG$ts <- signif(tG$year + (tG$month-0.5)/12, digits=6)
+tG$time <- paste(tG$year,tG$month, '15 00:00:00', sep='-')
+
+write.table(tG, file = "csv/monthly_temperature_global.csv", append = FALSE, quote = TRUE, sep = ",",
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE,
+            col.names = TRUE, qmethod = "escape", fileEncoding = "UTF-8")
 ```

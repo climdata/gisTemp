@@ -389,7 +389,27 @@ tempNorth &lt;- read.csv(&quot;https://data.giss.nasa.gov/gistemp/tabledata_v4/N
 
 tempSouth &lt;- read.csv(&quot;https://data.giss.nasa.gov/gistemp/tabledata_v4/SH.Ts+dSST.csv&quot;, sep=&quot;,&quot;, na = &quot;NA&quot;, skip = 1)
 
-tempZones &lt;- read.csv(&quot;https://data.giss.nasa.gov/gistemp/tabledata_v4/ZonAnn.Ts+dSST.csv&quot;, sep=&quot;,&quot;, na = &quot;NA&quot;, skip = 1)</code></pre>
+tempZones &lt;- read.csv(&quot;https://data.giss.nasa.gov/gistemp/tabledata_v4/ZonAnn.Ts+dSST.csv&quot;, sep=&quot;,&quot;, na = &quot;NA&quot;, skip = 1)
+
+currMonth &lt;- 1
+tG &lt;- tempGlobal[,c(&#39;Year&#39;, &#39;Jan&#39;)]
+names(tG)[names(tG) == &quot;Jan&quot;] &lt;- &quot;temperature&quot;
+tG$month = currMonth
+
+for (month in c(&quot;Feb&quot;,&quot;Mar&quot;,&quot;Apr&quot;,&quot;May&quot;,&quot;Jun&quot;,&quot;Jul&quot;,&quot;Aug&quot;,&quot;Sep&quot;,&quot;Oct&quot;,&quot;Nov&quot;,&quot;Dec&quot;)) {
+  currMonth &lt;- currMonth+1
+  temp &lt;- tempGlobal[,c(&#39;Year&#39;, month)]
+  names(temp)[names(temp) == month] &lt;- &quot;temperature&quot;
+  temp$month = currMonth
+  tG &lt;- rbind(tG, temp)
+}
+names(tG)[names(tG) == &#39;Year&#39;] &lt;- &#39;year&#39;
+tG$ts &lt;- signif(tG$year + (tG$month-0.5)/12, digits=6)
+tG$time &lt;- paste(tG$year,tG$month, &#39;15 00:00:00&#39;, sep=&#39;-&#39;)
+
+write.table(tG, file = &quot;csv/monthly_temperature_global.csv&quot;, append = FALSE, quote = TRUE, sep = &quot;,&quot;,
+            eol = &quot;\n&quot;, na = &quot;NA&quot;, dec = &quot;.&quot;, row.names = FALSE,
+            col.names = TRUE, qmethod = &quot;escape&quot;, fileEncoding = &quot;UTF-8&quot;)</code></pre>
 </div>
 
 
