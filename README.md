@@ -51,7 +51,7 @@ require("extrafont")
 ## Registering fonts with R
 ```
 
-## Load and Visialize Monthly Global Temperature Data 
+## Load and Convert Monthly Global Temperature Data 
 
 
 
@@ -66,19 +66,43 @@ tempZones <- read.csv("https://data.giss.nasa.gov/gistemp/tabledata_v4/ZonAnn.Ts
 
 currMonth <- 1
 tG <- tempGlobal[,c('Year', 'Jan')]
-names(tG)[names(tG) == "Jan"] <- "temperature"
+names(tG)[names(tG) == "Jan"] <- "global"
 tG$month = currMonth
+
+tN <- tempNorth[,c('Year', 'Jan')]
+names(tN)[names(tN) == "Jan"] <- "north"
+tN$month = currMonth
+
+tS <- tempSouth[,c('Year', 'Jan')]
+names(tS)[names(tS) == "Jan"] <- "south"
+tS$month = currMonth
+
+
 
 for (month in c("Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec")) {
   currMonth <- currMonth+1
-  temp <- tempGlobal[,c('Year', month)]
-  names(temp)[names(temp) == month] <- "temperature"
-  temp$month = currMonth
-  tG <- rbind(tG, temp)
+  tempG <- tempGlobal[,c('Year', month)]
+  names(tempG)[names(tempG) == month] <- "global"
+  tempG$month = currMonth
+  tG <- rbind(tG, tempG)
+
+  tempN <- tempNorth[,c('Year', month)]
+  names(tempN)[names(tempN) == month] <- "north"
+  tempN$month = currMonth
+  tN <- rbind(tN, tempN)
+  
+  tempS <- tempSouth[,c('Year', month)]
+  names(tempS)[names(tempS) == month] <- "south"
+  tempS$month = currMonth
+  tS <- rbind(tS, tempS)  
 }
+
+tG <- merge(tG,tN, by=c("Year","month"))
+tG <- merge(tG,tS, by=c("Year","month"))
 names(tG)[names(tG) == 'Year'] <- 'year'
 tG$ts <- signif(tG$year + (tG$month-0.5)/12, digits=6)
 tG$time <- paste(tG$year,tG$month, '15 00:00:00', sep='-')
+tG <- tG[order(tG$ts),]
 
 write.table(tG, file = "csv/monthly_temperature_global.csv", append = FALSE, quote = TRUE, sep = ",",
             eol = "\n", na = "NA", dec = ".", row.names = FALSE,

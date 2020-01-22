@@ -381,8 +381,8 @@ summary {
 <pre><code>## Loading required package: extrafont</code></pre>
 <pre><code>## Warning: package &#39;extrafont&#39; was built under R version 3.5.2</code></pre>
 <pre><code>## Registering fonts with R</code></pre>
-<div id="load-and-visialize-monthly-global-temperature-data" class="section level2">
-<h2>Load and Visialize Monthly Global Temperature Data</h2>
+<div id="load-and-convert-monthly-global-temperature-data" class="section level2">
+<h2>Load and Convert Monthly Global Temperature Data</h2>
 <pre class="r"><code>tempGlobal &lt;- read.csv(&quot;https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv&quot;, sep=&quot;,&quot;, na = &quot;NA&quot;, skip = 1)
 
 tempNorth &lt;- read.csv(&quot;https://data.giss.nasa.gov/gistemp/tabledata_v4/NH.Ts+dSST.csv&quot;, sep=&quot;,&quot;, na = &quot;NA&quot;, skip = 1)
@@ -393,19 +393,43 @@ tempZones &lt;- read.csv(&quot;https://data.giss.nasa.gov/gistemp/tabledata_v4/Z
 
 currMonth &lt;- 1
 tG &lt;- tempGlobal[,c(&#39;Year&#39;, &#39;Jan&#39;)]
-names(tG)[names(tG) == &quot;Jan&quot;] &lt;- &quot;temperature&quot;
+names(tG)[names(tG) == &quot;Jan&quot;] &lt;- &quot;global&quot;
 tG$month = currMonth
+
+tN &lt;- tempNorth[,c(&#39;Year&#39;, &#39;Jan&#39;)]
+names(tN)[names(tN) == &quot;Jan&quot;] &lt;- &quot;north&quot;
+tN$month = currMonth
+
+tS &lt;- tempSouth[,c(&#39;Year&#39;, &#39;Jan&#39;)]
+names(tS)[names(tS) == &quot;Jan&quot;] &lt;- &quot;south&quot;
+tS$month = currMonth
+
+
 
 for (month in c(&quot;Feb&quot;,&quot;Mar&quot;,&quot;Apr&quot;,&quot;May&quot;,&quot;Jun&quot;,&quot;Jul&quot;,&quot;Aug&quot;,&quot;Sep&quot;,&quot;Oct&quot;,&quot;Nov&quot;,&quot;Dec&quot;)) {
   currMonth &lt;- currMonth+1
-  temp &lt;- tempGlobal[,c(&#39;Year&#39;, month)]
-  names(temp)[names(temp) == month] &lt;- &quot;temperature&quot;
-  temp$month = currMonth
-  tG &lt;- rbind(tG, temp)
+  tempG &lt;- tempGlobal[,c(&#39;Year&#39;, month)]
+  names(tempG)[names(tempG) == month] &lt;- &quot;global&quot;
+  tempG$month = currMonth
+  tG &lt;- rbind(tG, tempG)
+
+  tempN &lt;- tempNorth[,c(&#39;Year&#39;, month)]
+  names(tempN)[names(tempN) == month] &lt;- &quot;north&quot;
+  tempN$month = currMonth
+  tN &lt;- rbind(tN, tempN)
+  
+  tempS &lt;- tempSouth[,c(&#39;Year&#39;, month)]
+  names(tempS)[names(tempS) == month] &lt;- &quot;south&quot;
+  tempS$month = currMonth
+  tS &lt;- rbind(tS, tempS)  
 }
+
+tG &lt;- merge(tG,tN, by=c(&quot;Year&quot;,&quot;month&quot;))
+tG &lt;- merge(tG,tS, by=c(&quot;Year&quot;,&quot;month&quot;))
 names(tG)[names(tG) == &#39;Year&#39;] &lt;- &#39;year&#39;
 tG$ts &lt;- signif(tG$year + (tG$month-0.5)/12, digits=6)
 tG$time &lt;- paste(tG$year,tG$month, &#39;15 00:00:00&#39;, sep=&#39;-&#39;)
+tG &lt;- tG[order(tG$ts),]
 
 write.table(tG, file = &quot;csv/monthly_temperature_global.csv&quot;, append = FALSE, quote = TRUE, sep = &quot;,&quot;,
             eol = &quot;\n&quot;, na = &quot;NA&quot;, dec = &quot;.&quot;, row.names = FALSE,
