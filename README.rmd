@@ -8,7 +8,9 @@ output:
   pdf_document: default
 ---
 
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 GISS Surface Temperature Analysis (GISTEMP v4)
 
@@ -22,40 +24,15 @@ Lenssen, N., G. Schmidt, J. Hansen, M. Menne, A. Persin, R. Ruedy, and D. Zyss, 
 
 
 
-
-```r
+```{r init, fig.width=50, fig.height=50}
 require("ggplot2")
-```
-
-```
-## Loading required package: ggplot2
-```
-
-```
-## Warning: package 'ggplot2' was built under R version 3.5.3
-```
-
-```r
 require("extrafont")
-```
-
-```
-## Loading required package: extrafont
-```
-
-```
-## Warning: package 'extrafont' was built under R version 3.5.2
-```
-
-```
-## Registering fonts with R
 ```
 
 ## Load and Visialize Monthly Global Temperature Data 
 
 
-
-```r
+```{r pi, fig.width=50, fig.height=25}
 tempGlobal <- read.csv("https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv", sep=",", na = "NA", skip = 1)
 
 tempNorth <- read.csv("https://data.giss.nasa.gov/gistemp/tabledata_v4/NH.Ts+dSST.csv", sep=",", na = "NA", skip = 1)
@@ -63,4 +40,7 @@ tempNorth <- read.csv("https://data.giss.nasa.gov/gistemp/tabledata_v4/NH.Ts+dSS
 tempSouth <- read.csv("https://data.giss.nasa.gov/gistemp/tabledata_v4/SH.Ts+dSST.csv", sep=",", na = "NA", skip = 1)
 
 tempZones <- read.csv("https://data.giss.nasa.gov/gistemp/tabledata_v4/ZonAnn.Ts+dSST.csv", sep=",", na = "NA", skip = 1)
+
+
+ 
 ```
