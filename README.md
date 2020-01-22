@@ -108,3 +108,20 @@ write.table(tG, file = "csv/monthly_temperature_global.csv", append = FALSE, quo
             eol = "\n", na = "NA", dec = ".", row.names = FALSE,
             col.names = TRUE, qmethod = "escape", fileEncoding = "UTF-8")
 ```
+
+
+## Plot Temperature
+
+
+```r
+require("ggplot2")
+temp <- read.csv("./csv/monthly_temperature_global.csv", sep=",")
+mp <- ggplot() +
+      geom_line(aes(y=temp$global, x=temp$ts), color="green") +
+      geom_line(aes(y=temp$north, x=temp$ts), color="blue") +
+      geom_line(aes(y=temp$south, x=temp$ts), color="red") +
+      xlab("Year") + ylab("Temperature ['C]")
+mp
+```
+
+![](README_files/figure-html/plot-1.png)<!-- -->
